@@ -2,6 +2,16 @@ const express = require('express')
 const router = express.Router()
 const db = require('../db')
 
+router.get("/", async (req, res) => {
+    try {
+        const selectOrders = 'SELECT * FROM orders ORDER BY created_at DESC'
+        const orders = await db.query(selectOrders)
+        res.status(200).send(orders.rows)
+    } catch (error) {
+        res.status(500).json({error: error.message})
+    }
+})
+
 router.post("/", async (req, res) => {
     const client = await db.connect()
     try {
@@ -43,7 +53,7 @@ router.post("/", async (req, res) => {
             await client.query(insertQuantity, [quantity.quantity, orderId, quantity.meal_id])
             const meal = await client.query(getMealById, [quantity.meal_id])
             
-            order[0].quantities.push(meal.rows[0])
+            order[0].quantities.push({"quantity": quantity.quantity,"meal": meal.rows[0]})
             bill += meal.rows[0].price * quantity.quantity
         }
 

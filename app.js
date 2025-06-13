@@ -2,8 +2,8 @@ const express = require('express')
 const app = express()
 var cors = require('cors')
 
-const mealsRoutes = require('./routes/meals')
-const ordersRoutes = require('./routes/orders')
+const mealsRoutes = require('./routes/meal')
+const ordersRoutes = require('./routes/order')
 
 app.use(cors())
 app.use(express.json())
