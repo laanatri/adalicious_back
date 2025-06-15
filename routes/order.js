@@ -12,6 +12,17 @@ router.get("/", async (req, res) => {
     }
 })
 
+router.get("/:id", async (req, res) => {
+    const { id } = req.params
+    try {
+        const selectOrder = 'SELECT * FROM orders WHERE id = $1'
+        const order = await db.query(selectOrder, [id])
+        res.status(200).send(order.rows)
+    } catch (error) {
+        res.status(500).json({error: error.message})
+    }
+})
+
 router.post("/", async (req, res) => {
     const client = await db.connect()
     try {
@@ -77,6 +88,19 @@ router.post("/", async (req, res) => {
         res.status(500).json({error: error.message})
     } finally {
         client.release()
+    }
+})
+
+router.patch("/:id", async (req, res) => {
+    const {orderStatusId} = req.body
+    const {orderId} = req.params
+    // faux, encore en test
+    try {
+        const updateOrderStatus = 'UPDATE orders SET order_statu_id = $1 WHERE id = $2'
+        const update = await db.query(updateOrderStatus, [orderStatusId, orderId])
+        res.status(200).json(update.rows)
+    } catch (error) {
+        res.status(500).json({error: error.message})
     }
 })
 
